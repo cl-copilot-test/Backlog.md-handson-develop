@@ -17,6 +17,8 @@
 <code>npm i -g backlog.md</code>
 </p>
 
+<p align="center"><a href="README.ja.md">日本語クイックスタート</a></p>
+
 ![Backlog demo GIF using: backlog board](./.github/backlog-v1.40.gif)
 
 
