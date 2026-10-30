@@ -32,6 +32,7 @@ Running `backlog config` with no arguments launches the interactive advanced wiz
 | `defaultEditor`   | Editor for 'E' key | Platform default (nano/notepad) |
 | `defaultPort`     | Web UI port        | `6420`                        |
 | `autoOpenBrowser` | Open browser automatically | `true`            |
+| `webLanguage`     | Web UI display language (`en`, `ja`, or `auto`) | `auto` (browser language, else English) |
 | `remoteOperations`| Enable remote git operations | `true`           |
 | `autoCommit`      | Automatically commit task changes | `false`       |
 | `bypassGitHooks`  | Skip git hooks when committing (uses --no-verify) | `false`       |

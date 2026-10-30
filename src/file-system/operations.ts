@@ -9,6 +9,7 @@ import {
 	DEFAULT_STATUSES,
 	FALLBACK_STATUS,
 } from "../constants/index.ts";
+import { isWebLanguage } from "../i18n/index.ts";
 import { parseFrontmatter } from "../markdown/frontmatter.ts";
 import {
 	parseDecision,
@@ -2365,6 +2366,13 @@ ${description || `Milestone: ${title}`}`,
 				case "hide_empty_columns":
 					config.hideEmptyColumns = value.toLowerCase() === "true";
 					break;
+				case "web_language": {
+					const language = value.replace(/['"]/g, "");
+					if (isWebLanguage(language)) {
+						config.webLanguage = language;
+					}
+					break;
+				}
 				case "default_port":
 					config.defaultPort = Number.parseInt(value, 10);
 					break;
@@ -2421,6 +2429,7 @@ ${description || `Milestone: ${title}`}`,
 			defaultEditor: config.defaultEditor,
 			autoOpenBrowser: config.autoOpenBrowser,
 			hideEmptyColumns: config.hideEmptyColumns,
+			webLanguage: config.webLanguage,
 			defaultPort: config.defaultPort,
 			remoteOperations: config.remoteOperations,
 			autoCommit: config.autoCommit,
@@ -2461,6 +2470,7 @@ ${description || `Milestone: ${title}`}`,
 			...(config.defaultEditor ? [`default_editor: "${config.defaultEditor}"`] : []),
 			...(typeof config.autoOpenBrowser === "boolean" ? [`auto_open_browser: ${config.autoOpenBrowser}`] : []),
 			...(typeof config.hideEmptyColumns === "boolean" ? [`hide_empty_columns: ${config.hideEmptyColumns}`] : []),
+			...(config.webLanguage ? [`web_language: ${config.webLanguage}`] : []),
 			...(config.defaultPort ? [`default_port: ${config.defaultPort}`] : []),
 			...(typeof config.remoteOperations === "boolean" ? [`remote_operations: ${config.remoteOperations}`] : []),
 			...(typeof config.autoCommit === "boolean" ? [`auto_commit: ${config.autoCommit}`] : []),

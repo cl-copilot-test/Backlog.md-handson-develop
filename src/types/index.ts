@@ -1,3 +1,5 @@
+import type { WebLanguage } from "../i18n/index.ts";
+
 export type TaskStatus = string;
 
 /**
@@ -405,6 +407,8 @@ export interface BacklogConfig {
 	defaultPort?: number;
 	/** When true, hide board columns whose status has no tasks. Columns reappear while a task is being dragged so they remain valid drop targets. Defaults to false. */
 	hideEmptyColumns?: boolean;
+	/** Browser UI display language. Unset means follow the browser's preferred language. */
+	webLanguage?: WebLanguage;
 	remoteOperations?: boolean;
 	autoCommit?: boolean;
 	/** Disable all Git integration for filesystem-only projects. */

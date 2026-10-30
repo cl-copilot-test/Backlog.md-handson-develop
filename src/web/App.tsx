@@ -14,6 +14,7 @@ import InitializationScreen from './components/InitializationScreen';
 import LoadingSpinner from './components/LoadingSpinner';
 import { SuccessToast } from './components/SuccessToast';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 import { TaskIdIndexProvider } from './contexts/TaskIdIndexContext';
 import {
 	type Decision,
@@ -974,6 +975,7 @@ function AppContent() {
 
   return (
     <ThemeProvider>
+      <LanguageProvider configuredLanguage={config?.webLanguage}>
       <TaskIdIndexProvider tasks={tasks}>
       <Routes>
             <Route
@@ -1111,6 +1113,7 @@ function AppContent() {
         />
       )}
       </TaskIdIndexProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

@@ -228,6 +228,24 @@ describe("Config commands", () => {
 		expect(listOutput).toContain("hideEmptyColumns: true");
 	});
 
+	it("round-trips webLanguage through config get/set/list and clears it with auto", async () => {
+		const defaultGet = await $`bun ${CLI_PATH} config get webLanguage`.cwd(TEST_DIR).text();
+		expect(defaultGet.trim()).toBe("auto");
+
+		await $`bun ${CLI_PATH} config set webLanguage ja`.cwd(TEST_DIR).quiet();
+		expect((await core.filesystem.loadConfig())?.webLanguage).toBe("ja");
+		const listOutput = await $`bun ${CLI_PATH} config list`.cwd(TEST_DIR).text();
+		expect(listOutput).toContain("webLanguage: ja");
+
+		const rejected = await $`bun ${CLI_PATH} config set webLanguage fr`.cwd(TEST_DIR).nothrow().quiet();
+		expect(rejected.exitCode).not.toBe(0);
+		expect(rejected.stderr.toString()).toContain("webLanguage must be one of: auto, en, ja");
+
+		await $`bun ${CLI_PATH} config set webLanguage auto`.cwd(TEST_DIR).quiet();
+		const afterAuto = await $`bun ${CLI_PATH} config get webLanguage`.cwd(TEST_DIR).text();
+		expect(afterAuto.trim()).toBe("auto");
+	});
+
 	it("parses block-style YAML sequences identically to inline arrays for list keys", () => {
 		const inline = core.filesystem.parseConfig(
 			'project_name: "P"\nstatuses: ["To Do", "Done"]\nlabels: ["a", "b"]\ntypes: ["bug", "epic"]\npriorities: ["Critical", "Low"]\n',

@@ -9,6 +9,7 @@ import type { SearchService } from "../core/search-service.ts";
 import { getTaskStatistics } from "../core/statistics.ts";
 import { loadTaskDetail } from "../core/task-detail.ts";
 import { isCreateLockError, isTaskLockError } from "../file-system/operations.ts";
+import { isWebLanguage, WEB_LANGUAGES } from "../i18n/index.ts";
 import { AmbiguousDecisionSectionError } from "../markdown/structured-sections.ts";
 import { BacklogToolError } from "../mcp/errors/mcp-errors.ts";
 import { MilestoneHandlers } from "../mcp/tools/milestones/handlers.ts";
@@ -1548,6 +1549,10 @@ export class BacklogServer {
 
 			if (updatedConfig.defaultPort && (updatedConfig.defaultPort < 1 || updatedConfig.defaultPort > 65535)) {
 				return Response.json({ error: "Port must be between 1 and 65535" }, { status: 400 });
+			}
+
+			if (updatedConfig.webLanguage !== undefined && !isWebLanguage(updatedConfig.webLanguage)) {
+				return Response.json({ error: `Web language must be one of: ${WEB_LANGUAGES.join(", ")}` }, { status: 400 });
 			}
 
 			// Save configuration

@@ -5,6 +5,7 @@ import AcceptanceCriteriaProgress, { getAcceptanceCriteriaProgressCounts } from 
 import StoredDate from './StoredDate';
 import ProjectBadge from './ProjectBadge';
 import TaskTypeBadge from './TaskTypeBadge';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface TaskCardProps {
   task: Task;
@@ -75,6 +76,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
   isSelectionDragging = false,
   onSelectionDragChange,
 }) => {
+  const { t } = useLanguage();
   const [isDragging, setIsDragging] = React.useState(false);
   const [showBranchTooltip, setShowBranchTooltip] = React.useState(false);
 
@@ -82,8 +84,19 @@ const TaskCard: React.FC<TaskCardProps> = ({
   const isFromOtherBranch = Boolean(task.branch);
   const acceptanceCriteriaProgress = getAcceptanceCriteriaProgressCounts(task);
   const accessibleLabel = acceptanceCriteriaProgress
-    ? `Open ${task.id}: ${task.title}. Acceptance criteria progress: ${acceptanceCriteriaProgress.checked} of ${acceptanceCriteriaProgress.total}`
-    : `Open ${task.id}: ${task.title}`;
+    ? t('board.card.openWithProgress', {
+        id: task.id,
+        title: task.title,
+        checked: acceptanceCriteriaProgress.checked,
+        total: acceptanceCriteriaProgress.total,
+      })
+    : t('board.card.open', { id: task.id, title: task.title });
+  // These messages wrap a styled element, so each is split around its placeholder and the element
+  // is rendered between the two halves.
+  const [switchBranchBefore, switchBranchAfter] = t('board.card.switchBranch').split('{branch}');
+  const [fromBranchBefore, fromBranchAfter] = t('board.card.fromBranch').split('{branch}');
+  const [updatedBefore, updatedAfter] = t('board.card.updated').split('{date}');
+  const [dueBefore, dueAfter] = t('board.card.due').split('{date}');
 
   const handleDragStart = (e: React.DragEvent) => {
     // Prevent dragging cross-branch tasks
@@ -169,7 +182,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
             <svg className="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            Switch to <span className="font-semibold text-amber-300">{task.branch}</span> branch to move this task
+            {switchBranchBefore}<span className="font-semibold text-amber-300">{task.branch}</span>{switchBranchAfter}
           </div>
           <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900 dark:bg-gray-700"></div>
         </div>
@@ -222,7 +235,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
             </svg>
             <span className="truncate">
-              From <span className="font-semibold">{task.branch}</span> branch
+              {fromBranchBefore}<span className="font-semibold">{task.branch}</span>{fromBranchAfter}
             </span>
           </div>
         )}
@@ -283,9 +296,9 @@ const TaskCard: React.FC<TaskCardProps> = ({
               A new labelled date in the compact style belongs inside this group. */}
           <span className="flex flex-wrap gap-x-2 gap-y-1">
             <StoredDate value={task.createdDate} dateFormat={dateFormat} compact />
-            {task.updatedDate && <span>Updated: <StoredDate value={task.updatedDate} dateFormat={dateFormat} compact /></span>}
+            {task.updatedDate && <span>{updatedBefore}<StoredDate value={task.updatedDate} dateFormat={dateFormat} compact />{updatedAfter}</span>}
           </span>
-          {task.dueDate && <span>Due: <StoredDate value={task.dueDate} dateFormat={dateFormat} /></span>}
+          {task.dueDate && <span>{dueBefore}<StoredDate value={task.dueDate} dateFormat={dateFormat} />{dueAfter}</span>}
           {task.assignee.length > 0 && (
             <span className="truncate max-w-[80px]" title={task.assignee.join(', ')}>
               {task.assignee[0]}

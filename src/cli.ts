@@ -43,6 +43,7 @@ import {
 	taskViewJson,
 } from "./formatters/json-output.ts";
 import { formatTaskPlainText } from "./formatters/task-plain-text.ts";
+import { isWebLanguage, WEB_LANGUAGES } from "./i18n/index.ts";
 import {
 	type AgentInstructionFile,
 	addAgentInstructions,
@@ -172,6 +173,7 @@ const CONFIG_GET_KEYS = [
 	"maxColumnWidth",
 	"defaultPort",
 	"autoOpenBrowser",
+	"webLanguage",
 	"remoteOperations",
 	"autoCommit",
 	"filesystemOnly",
@@ -189,6 +191,7 @@ const CONFIG_SET_KEYS = [
 	"dateFormat",
 	"maxColumnWidth",
 	"autoOpenBrowser",
+	"webLanguage",
 	"defaultPort",
 	"remoteOperations",
 	"autoCommit",
@@ -5356,7 +5359,7 @@ agentsCmd
 
 // Config command group
 const CONFIG_AVAILABLE_KEYS =
-	"Available keys: defaultEditor, projectName, defaultAssignee, defaultStatus, statuses, labels, priorities, types, projects, milestones, definitionOfDone, dateFormat, maxColumnWidth, defaultPort, autoOpenBrowser, hideEmptyColumns, remoteOperations, autoCommit, filesystemOnly, bypassGitHooks, zeroPaddedIds, checkActiveBranches, activeBranchDays";
+	"Available keys: defaultEditor, projectName, defaultAssignee, defaultStatus, statuses, labels, priorities, types, projects, milestones, definitionOfDone, dateFormat, maxColumnWidth, defaultPort, autoOpenBrowser, hideEmptyColumns, webLanguage, remoteOperations, autoCommit, filesystemOnly, bypassGitHooks, zeroPaddedIds, checkActiveBranches, activeBranchDays";
 
 const configCmd = addHelpSchema(program.command("config"), {
 	reads: "Project Backlog.md configuration",
@@ -5527,6 +5530,9 @@ addHelpSchema(configCmd.command("get <key>"), {
 				case "hideEmptyColumns":
 					console.log(config.hideEmptyColumns?.toString() || "false");
 					break;
+				case "webLanguage":
+					console.log(config.webLanguage || "auto");
+					break;
 				case "remoteOperations":
 					console.log(config.remoteOperations?.toString() || "");
 					break;
@@ -5643,6 +5649,18 @@ addHelpSchema(configCmd.command("set <key> <value>"), {
 						config.hideEmptyColumns = false;
 					} else {
 						console.error("hideEmptyColumns must be true or false");
+						process.exit(1);
+					}
+					break;
+				}
+				case "webLanguage": {
+					const language = value.toLowerCase();
+					if (language === "auto") {
+						config.webLanguage = undefined;
+					} else if (isWebLanguage(language)) {
+						config.webLanguage = language;
+					} else {
+						console.error(`webLanguage must be one of: auto, ${WEB_LANGUAGES.join(", ")}`);
 						process.exit(1);
 					}
 					break;
@@ -5825,6 +5843,7 @@ addHelpSchema(configCmd.command("list"), {
 			console.log(`  maxColumnWidth: ${config.maxColumnWidth || "(not set)"}`);
 			console.log(`  autoOpenBrowser: ${config.autoOpenBrowser ?? "(not set)"}`);
 			console.log(`  hideEmptyColumns: ${config.hideEmptyColumns ?? "(not set)"}`);
+			console.log(`  webLanguage: ${config.webLanguage ?? "auto"}`);
 			console.log(`  defaultPort: ${config.defaultPort ?? "(not set)"}`);
 			console.log(`  remoteOperations: ${config.remoteOperations ?? "(not set)"}`);
 			console.log(`  autoCommit: ${config.autoCommit ?? "(not set)"}`);
