@@ -41,6 +41,8 @@ const en = {
 	"nav.settings": "Settings",
 	"nav.switchToDark": "Switch to dark mode",
 	"nav.switchToLight": "Switch to light mode",
+	"nav.language": "Language",
+	"nav.languageAuto": "Auto",
 };
 
 const ja: Record<keyof typeof en, string> = {
@@ -86,6 +88,8 @@ const ja: Record<keyof typeof en, string> = {
 	"nav.settings": "設定",
 	"nav.switchToDark": "ダークモードに切り替え",
 	"nav.switchToLight": "ライトモードに切り替え",
+	"nav.language": "言語",
+	"nav.languageAuto": "自動",
 };
 
 export const navigationMessages = { en, ja };

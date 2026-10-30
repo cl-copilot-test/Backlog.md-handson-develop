@@ -1,5 +1,6 @@
 import React from 'react';
 import { BranchIndexingIndicator } from './BranchIndexingIndicator';
+import LanguageSwitcher from './LanguageSwitcher';
 import ThemeToggle from './ThemeToggle';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -27,6 +28,7 @@ const Navigation: React.FC<NavigationProps> = ({projectName, loadingMessage}) =>
                 </div>
                 <div className="flex items-center gap-3">
                     <BranchIndexingIndicator message={loadingMessage} />
+                    <LanguageSwitcher />
                     <ThemeToggle />
                 </div>
             </div>
